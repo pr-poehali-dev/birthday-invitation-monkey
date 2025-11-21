@@ -1,12 +1,40 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import Icon from "@/components/ui/icon";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 
 const Index = () => {
   const [rsvpStatus, setRsvpStatus] = useState<string | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
+  const [timeLeft, setTimeLeft] = useState({
+    days: 0,
+    hours: 0,
+    minutes: 0,
+    seconds: 0
+  });
+
+  useEffect(() => {
+    const calculateTimeLeft = () => {
+      const eventDate = new Date('2025-11-24T18:00:00').getTime();
+      const now = new Date().getTime();
+      const difference = eventDate - now;
+
+      if (difference > 0) {
+        setTimeLeft({
+          days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+          hours: Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+          minutes: Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60)),
+          seconds: Math.floor((difference % (1000 * 60)) / 1000)
+        });
+      }
+    };
+
+    calculateTimeLeft();
+    const timer = setInterval(calculateTimeLeft, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
 
   const toggleMusic = () => {
     if (audioRef.current) {
@@ -88,6 +116,31 @@ const Index = () => {
           </p>
           <div className="flex justify-center gap-4 text-4xl animate-scale-in">
             🙈 🙉 🙊
+          </div>
+
+          {/* Countdown Timer */}
+          <div className="mt-12 animate-fade-in">
+            <Card className="p-6 bg-white/95 backdrop-blur-sm shadow-2xl border-4 border-orange-400 max-w-3xl mx-auto">
+              <p className="text-2xl font-black text-gray-800 mb-4 text-center">⏰ ДО ПРАЗДНИКА ОСТАЛОСЬ ⏰</p>
+              <div className="grid grid-cols-4 gap-4">
+                <div className="text-center p-4 bg-gradient-to-br from-orange-100 to-orange-200 rounded-xl">
+                  <div className="text-4xl font-black text-orange-600">{timeLeft.days}</div>
+                  <div className="text-sm font-bold text-gray-700 mt-1">ДНЕЙ</div>
+                </div>
+                <div className="text-center p-4 bg-gradient-to-br from-pink-100 to-pink-200 rounded-xl">
+                  <div className="text-4xl font-black text-pink-600">{timeLeft.hours}</div>
+                  <div className="text-sm font-bold text-gray-700 mt-1">ЧАСОВ</div>
+                </div>
+                <div className="text-center p-4 bg-gradient-to-br from-purple-100 to-purple-200 rounded-xl">
+                  <div className="text-4xl font-black text-purple-600">{timeLeft.minutes}</div>
+                  <div className="text-sm font-bold text-gray-700 mt-1">МИНУТ</div>
+                </div>
+                <div className="text-center p-4 bg-gradient-to-br from-orange-100 to-pink-100 rounded-xl">
+                  <div className="text-4xl font-black text-orange-600">{timeLeft.seconds}</div>
+                  <div className="text-sm font-bold text-gray-700 mt-1">СЕКУНД</div>
+                </div>
+              </div>
+            </Card>
           </div>
         </section>
 
