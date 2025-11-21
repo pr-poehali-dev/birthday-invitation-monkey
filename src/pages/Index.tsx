@@ -1,10 +1,23 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import Icon from "@/components/ui/icon";
-import { useState } from "react";
+import { useState, useRef } from "react";
 
 const Index = () => {
   const [rsvpStatus, setRsvpStatus] = useState<string | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const audioRef = useRef<HTMLAudioElement>(null);
+
+  const toggleMusic = () => {
+    if (audioRef.current) {
+      if (isPlaying) {
+        audioRef.current.pause();
+      } else {
+        audioRef.current.play();
+      }
+      setIsPlaying(!isPlaying);
+    }
+  };
 
   const gifts = [
     { icon: "Gift", text: "Деньги (лучший подарок)", emoji: "💸" },
@@ -36,6 +49,28 @@ const Index = () => {
     <div className="min-h-screen bg-gradient-to-br from-orange-100 via-pink-100 to-purple-200">
       <div className="container mx-auto px-4 py-8 max-w-6xl">
         
+        {/* Music Player */}
+        <div className="fixed top-4 right-4 z-50">
+          <Button
+            onClick={toggleMusic}
+            className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold rounded-full w-16 h-16 shadow-2xl hover:shadow-purple-500/50 transition-all duration-300 flex items-center justify-center"
+            size="icon"
+          >
+            {isPlaying ? (
+              <Icon name="Pause" size={28} />
+            ) : (
+              <Icon name="Music" size={28} />
+            )}
+          </Button>
+        </div>
+
+        {/* Hidden Audio Element */}
+        <audio
+          ref={audioRef}
+          loop
+          src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
+        />
+
         {/* Hero Section */}
         <section className="text-center mb-16 pt-8">
           <div className="inline-block mb-6 animate-bounce-slow">
